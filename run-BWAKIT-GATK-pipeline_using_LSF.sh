@@ -64,7 +64,7 @@ for sample in `cat $BAMLIST`; do
     CMD[2]="time -p $GATK -T RealignerTargetCreator -nt ${NO_CORES} -R ${REF} -known ${MILLS} -I ${BAMDIR}/${prefix}.aln.bam -o ${BAMDIR}/${prefix}.realigner.intervals"
     CMD[3]="time -p $GATK -T IndelRealigner -R $REF -known ${MILLS} -I ${BAMDIR}/${prefix}.aln.bam -targetIntervals ${BAMDIR}/${prefix}.realigner.intervals -o ${BAMDIR}/${prefix}.realigned.bam"
     CMD[4]="time -p $GATK -T BaseRecalibrator -nct ${NO_CORES} -I ${BAMDIR}/${prefix}.realigned.bam -R $REF -knownSites $DBSNP -o ${BAMDIR}/${prefix}.recal.table"
-    CMD[5]="time -p $GATK -T PrintReads -nct 32 -I ${BAMDIR}/${prefix}.realigned.bam -R $REF -BQSR ${BAMDIR}/${prefix}.recal.table -o ${BAMDIR}/${prefix}.realigned.recal.bam"
+    CMD[5]="time -p $GATK -T PrintReads -nct ${NO_CORES} -I ${BAMDIR}/${prefix}.realigned.bam -R $REF -BQSR ${BAMDIR}/${prefix}.recal.table -o ${BAMDIR}/${prefix}.realigned.recal.bam"
     CMD[6]="time -p $GATK -T HaplotypeCaller -nct ${NO_CORES} -pairHMM VECTOR_LOGLESS_CACHING -R $REF -I ${BAMDIR}/${prefix}.realigned.recal.bam --emitRefConfidence GVCF --variant_index_type LINEAR --variant_index_parameter 128000 --dbsnp $DBSNP -o ${VCFDIR}/${prefix}.raw.snps.indels.g.vcf"
     CMD[7]="time -p $GATK -T BaseRecalibrator -nct ${NO_CORES} -I ${BAMDIR}/${prefix}.realigned.bam -R $REF -knownSites $DBSNP -BQSR ${BAMDIR}/${prefix}.recal.table -o ${BAMDIR}/${prefix}.after_recal.table"
     CMD[8]="time -p $GATK -T AnalyzeCovariates -R $REF -before ${BAMDIR}/${prefix}.recal.table -after ${BAMDIR}/${prefix}.after_recal.table -plots ${BAMDIR}/${prefix}.recal_plots.pdf"
